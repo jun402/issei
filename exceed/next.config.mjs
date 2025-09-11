@@ -21,14 +21,15 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
+  output: 'export',       // 静的サイト化
+  basePath: '/issei',     // 👈 正しいクオートに修正
+  assetPrefix: '/issei/', // 👈 同上
 }
 
 mergeConfig(nextConfig, userConfig)
 
 function mergeConfig(nextConfig, userConfig) {
-  if (!userConfig) {
-    return
-  }
+  if (!userConfig) return
 
   for (const key in userConfig) {
     if (
@@ -46,3 +47,4 @@ function mergeConfig(nextConfig, userConfig) {
 }
 
 export default nextConfig
+
