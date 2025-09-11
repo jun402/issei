@@ -57,11 +57,11 @@ jobs:
       cache: ${{ steps.detect-package-manager.outputs.manager }}
       # キャッシュの依存関係ファイルのパスを明示的に指定
       cache-dependency-path: './exceed/package-lock.json' 
-      - name: Setup Pages
+    - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
           static_site_generator: next
-      - name: Restore cache
+    - name: Restore cache
         uses: actions/cache@v4
         with:
           path: |
@@ -69,15 +69,15 @@ jobs:
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/exceed/package-lock.json', '**/exceed/yarn.lock') }}-${{ hashFiles('**/exceed/**.[jt]s', '**/exceed/**.[jt]sx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/exceed/package-lock.json', '**/exceed/yarn.lock') }}-
-      - name: Install dependencies
+    - name: Install dependencies
         # 絶対パスを使用
         working-directory: ${{ github.workspace }}/exceed
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-      - name: Build with Next.js (using package.json script)
+    - name: Build with Next.js (using package.json script)
         # 絶対パスを使用
         working-directory: ${{ github.workspace }}/exceed
         run: ${{ steps.detect-package-manager.outputs.manager }} run build
-      - name: Upload artifact
+    - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           # 絶対パスを使用
