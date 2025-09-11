@@ -22,7 +22,7 @@ const nextConfig = {
     parallelServerCompiles: true,
   },
   output: 'export',       // 静的サイト化
-  basePath: '/issei',     // 👈 正しいクオートに修正
+  basePath: '/issei/',     // 👈 正しいクオートに修正
   assetPrefix: '/issei/', // 👈 同上
 }
 
