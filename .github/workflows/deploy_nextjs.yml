@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: Detect package manager
         id: detect-package-manager
-        working-directory: './exceed'
+        working-directory: './exceed/'
         run: |
           if [ -f "yarn.lock" ]; then
             echo "manager=yarn" >> $GITHUB_OUTPUT
