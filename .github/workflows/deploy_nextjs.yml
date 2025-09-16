@@ -1,91 +1,49 @@
-# Sample workflow for building and deploying a Next.js site to GitHub Pages
-#
-# To get started with Next.js see: https://nextjs.org/docs/getting-started
-#
+# .github/workflows/deploy_nextjs.yml
 name: Deploy Next.js site to Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
-  # Build job
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Detect package manager
-        id: detect-package-manager
-        # 絶対パスを使用
-        working-directory: ${{ github.workspace }}/exceed
-        run: |
-          if [ -f "yarn.lock" ]; then
-            echo "manager=yarn" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            echo "runner=yarn" >> $GITHUB_OUTPUT
-            exit 0
-          # package.jsonが存在すればnpmを特定
-          elif [ -f "package.json" ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            # npm ciではなく、npm installを使用
-            echo "command=install" >> $GITHUB_OUTPUT 
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-            exit 0
-          else
-            echo "Unable to determine package manager"
-            exit 1
-          fi
-      - name: Setup Node
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
-          # package-lock.jsonが存在しないため、キャッシュパスの指定を削除
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        with:
-          static_site_generator: next
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ github.workspace }}/exceed/.next/cache
-          # package-lock.jsonではなく、package.jsonをキャッシュキーに使用
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/exceed/package.json') }}-${{ hashFiles('**/exceed/**.[jt]s', '**/exceed/**.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/exceed/package.json') }}-
+          # 'cache: "npm"' を削除。これによりlockfileを探さなくなり、エラーが解消されます。
+
       - name: Install dependencies
-        # 絶対パスを使用
-        working-directory: ${{ github.workspace }}/exceed
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-      - name: Build with Next.js (using package.json script)
-        # 絶対パスを使用
-        working-directory: ${{ github.workspace }}/exceed
-        run: ${{ steps.detect-package-manager.outputs.manager }} run build
+        # package.jsonがあるディレクトリでnpm installを実行
+        working-directory: ./exceed
+        run: npm install
+
+      - name: Build with Next.js
+        # ビルドコマンドも同じディレクトリで実行
+        working-directory: ./exceed
+        run: npm run build
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # 絶対パスを使用
-          path: ${{ github.workspace }}/exceed/out
+          # Next.jsの静的エクスポート先であるoutディレクトリを指定
+          path: ./exceed/out
 
-  # Deployment job
   deploy:
     environment:
       name: github-pages
