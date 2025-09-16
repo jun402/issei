@@ -41,10 +41,10 @@ jobs:
             echo "command=install" >> $GITHUB_OUTPUT
             echo "runner=yarn" >> $GITHUB_OUTPUT
             exit 0
-          # ✅ package.jsonに修正
-          elif [ -f "package.json" ]; then 
+          # package.jsonが存在すればnpmを特定
+          elif [ -f "package.json" ]; then
             echo "manager=npm" >> $GITHUB_OUTPUT
-            # ✅ npm ciではなく、npm installを使用
+            # npm ciではなく、npm installを使用
             echo "command=install" >> $GITHUB_OUTPUT 
             echo "runner=npx --no-install" >> $GITHUB_OUTPUT
             exit 0
@@ -57,7 +57,7 @@ jobs:
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-          # ✅ cache-dependency-pathを削除
+          # package-lock.jsonが存在しないため、キャッシュパスの指定を削除
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
@@ -67,7 +67,7 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/exceed/.next/cache
-          # ✅ hashFilesのパスをpackage.jsonに変更
+          # package-lock.jsonではなく、package.jsonをキャッシュキーに使用
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/exceed/package.json') }}-${{ hashFiles('**/exceed/**.[jt]s', '**/exceed/**.[jt]sx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/exceed/package.json') }}-
