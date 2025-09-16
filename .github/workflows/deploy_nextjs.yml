@@ -1,4 +1,5 @@
 # .github/workflows/deploy_nextjs.yml
+
 name: Deploy Next.js site to Pages
 
 on:
@@ -26,22 +27,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          # 'cache: "npm"' を削除。これによりlockfileを探さなくなり、エラーが解消されます。
 
       - name: Install dependencies
-        # package.jsonがあるディレクトリでnpm installを実行
         working-directory: ./exceed
-        run: npm install
+        # この行を修正：--legacy-peer-deps を追加して依存関係のエラーを回避
+        run: npm install --legacy-peer-deps
 
       - name: Build with Next.js
-        # ビルドコマンドも同じディレクトリで実行
         working-directory: ./exceed
         run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Next.jsの静的エクスポート先であるoutディレクトリを指定
           path: ./exceed/out
 
   deploy:
