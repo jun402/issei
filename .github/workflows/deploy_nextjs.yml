@@ -41,7 +41,7 @@ jobs:
             echo "command=install" >> $GITHUB_OUTPUT
             echo "runner=yarn" >> $GITHUB_OUTPUT
             exit 0
-          elif [ -f "package.json" ]; then
+          elif [ -f "package-json" ]; then
             echo "manager=npm" >> $GITHUB_OUTPUT
             echo "command=ci" >> $GITHUB_OUTPUT
             echo "runner=npx --no-install" >> $GITHUB_OUTPUT
@@ -55,7 +55,7 @@ jobs:
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-          # キャッシュの依存関係ファイルのパスを明示的に指定
+          # 絶対パスを使用
           cache-dependency-path: '${{ github.workspace }}/exceed/package-lock.json' 
       - name: Setup Pages
         uses: actions/configure-pages@v5
