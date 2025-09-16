@@ -41,9 +41,11 @@ jobs:
             echo "command=install" >> $GITHUB_OUTPUT
             echo "runner=yarn" >> $GITHUB_OUTPUT
             exit 0
-          elif [ -f "package.json" ]; then
+          # ✅ package.jsonに修正
+          elif [ -f "package.json" ]; then 
             echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
+            # ✅ npm ciではなく、npm installを使用
+            echo "command=install" >> $GITHUB_OUTPUT 
             echo "runner=npx --no-install" >> $GITHUB_OUTPUT
             exit 0
           else
@@ -55,8 +57,7 @@ jobs:
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-          # 絶対パスを使用
-          cache-dependency-path: './exceed/package-lock.json' 
+          # ✅ cache-dependency-pathを削除
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
@@ -66,9 +67,10 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/exceed/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/exceed/package-lock.json', '**/exceed/yarn.lock') }}-${{ hashFiles('**/exceed/**.[jt]s', '**/exceed/**.[jt]sx') }}
+          # ✅ hashFilesのパスをpackage.jsonに変更
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/exceed/package.json') }}-${{ hashFiles('**/exceed/**.[jt]s', '**/exceed/**.[jt]sx') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/exceed/package-lock.json', '**/exceed/yarn.lock') }}-
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/exceed/package.json') }}-
       - name: Install dependencies
         # 絶対パスを使用
         working-directory: ${{ github.workspace }}/exceed
